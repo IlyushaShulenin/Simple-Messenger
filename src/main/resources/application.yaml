@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: simple_messenger
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/simple_messanger
+    username: postgres
+    password: postgre1488rp
+
+  profiles:
+    active: dev
+
+
