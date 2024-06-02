@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import ru.shulenin.simple_messanger.repository.jpa.ChatRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,11 +19,8 @@ class ChatRepositoryTest {
     @Test
     @Transactional(readOnly = true)
     void findAll() {
-        var chatsEager = chatRepository.findAllByFirstUserId(1L);
         var chatsLazy = chatRepository.findAll();
-
         chatsLazy.forEach(System.out::println);
-
         assertThat(true).isTrue();
     }
 }

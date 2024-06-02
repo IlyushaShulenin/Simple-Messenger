@@ -1,14 +1,21 @@
-package ru.shulenin.simple_messanger.service;
+package ru.shulenin.simple_messanger.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shulenin.simple_messanger.dto.UserReadDto;
 import ru.shulenin.simple_messanger.dto.UserSaveDto;
+import ru.shulenin.simple_messanger.exception.DataRecordingException;
 import ru.shulenin.simple_messanger.mapper.UserEntityToReadDto;
 import ru.shulenin.simple_messanger.mapper.UserSaveDtoToEntity;
-import ru.shulenin.simple_messanger.repository.UserRepository;
+import ru.shulenin.simple_messanger.repository.jpa.UserRepository;
+import ru.shulenin.simple_messanger.repository.redis.UserRedisRepository;
+import ru.shulenin.simple_messanger.security.UserDetailsDto;
+import ru.shulenin.simple_messanger.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +25,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserRedisRepository userRedisRepository;
 
     private final UserEntityToReadDto userEntityToReadDto;
     private final UserSaveDtoToEntity userSaveDtoToEntity;
@@ -32,25 +40,47 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserReadDto> findById(Long id) {
-        return userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .map(userEntityToReadDto::map);
+
+        user.ifPresent(userReadDto ->
+                userRedisRepository.save(userReadDto.getLogin())
+        );
+
+        return user;
     }
 
     @Override
     @Transactional
-    public UserReadDto saveUser(UserSaveDto userDto) {
+    public UserReadDto saveUser(UserSaveDto userDto) throws DataRecordingException {
+        var login = userDto.getLogin();
+
+        if (userRedisRepository.existsById(login)) {
+            throw new DataRecordingException("");
+        }
+        else {
+            var user = userRepository.findByLogin(login);
+
+            if (user.isPresent()) {
+                userRedisRepository.save(login);
+                throw new DataRecordingException("");
+            }
+        }
+
+        userRedisRepository.save(login);
         var user = userSaveDtoToEntity.map(userDto);
-        return userEntityToReadDto.map(userRepository.save(user));
+        return userEntityToReadDto.map(userRepository.saveAndFlush(user));
     }
 
     @Override
     @Transactional
     public boolean deleteUser(Long id) throws EntityNotFoundException {
         if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException();
+            return false;
         }
 
-        return deleteUser(id);
+        userRepository.deleteById(id);
+        return true;
     }
 
     @Override
@@ -66,5 +96,12 @@ public class UserServiceImpl implements UserService {
 
             return userEntityToReadDto.map(usr);
         });
+    }
+
+    @Override
+    public UserDetailsDto loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username)
+                .map(UserDetailsDto::new)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 }

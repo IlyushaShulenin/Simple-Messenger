@@ -1,3 +1,10 @@
+app:
+  name: api/v1/messenger
+
+token:
+  signing:
+    key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+
 spring:
   application:
     name: simple_messenger
@@ -8,7 +15,19 @@ spring:
     username: postgres
     password: postgre1488rp
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      url: jdbc:redis://localhost:6379/0
+
+  cache:
+    redis:
+      time-to-live: 60000
+
   profiles:
     active: dev
+
+
 
 
