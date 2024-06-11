@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <span th:text="${message}"></span>
+    <form th:action="@{/music/form}" enctype="multipart/form-data" method="get">
+        <input type="file">
+        <input type="submit">
+    </form>
+</body>
+</html>
