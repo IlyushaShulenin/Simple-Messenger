@@ -2,11 +2,13 @@ package ru.shulenin.simple_messanger.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
+import ru.shulenin.simple_messanger.dto.MusicUserSendDto;
+import ru.shulenin.simple_messanger.dto.UserMessage;
 import ru.shulenin.simple_messanger.dto.UserReadDto;
 import ru.shulenin.simple_messanger.dto.UserSaveDto;
 import ru.shulenin.simple_messanger.exception.DataRecordingException;
@@ -26,6 +28,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserRedisRepository userRedisRepository;
+
+    private final RestClient restClient;
 
     private final UserEntityToReadDto userEntityToReadDto;
     private final UserSaveDtoToEntity userSaveDtoToEntity;
@@ -69,6 +73,12 @@ public class UserServiceImpl implements UserService {
 
         userRedisRepository.save(login);
         var user = userSaveDtoToEntity.map(userDto);
+
+       restClient.post()
+               .uri("/user")
+               .body(new MusicUserSendDto(user.getEmail(), user.getPassword()))
+               .retrieve();
+
         return userEntityToReadDto.map(userRepository.saveAndFlush(user));
     }
 

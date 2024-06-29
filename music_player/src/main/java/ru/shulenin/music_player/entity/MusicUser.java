@@ -1,15 +1,17 @@
 package ru.shulenin.music_player.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
 @Data
+@Builder
+@ToString(exclude = {"playlists"})
+@EqualsAndHashCode(exclude = {"id", "playlists"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class MusicUser {
@@ -24,22 +26,19 @@ public class MusicUser {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Playlist> playlists = new ArrayList<>();
-
     @ManyToMany
     @JoinTable(
-            name = "playlist_document",
+            name = "playlist_music",
             joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "document_id")
+            inverseJoinColumns = @JoinColumn(name = "music_id")
     )
-    private List<Music> musics = new ArrayList<>();
+    @Builder.Default
+    private List<Playlist> playlists = new ArrayList<>();
 
-    public MusicUser(String email, String password, Role role, List<Playlist> playlists) {
+    public MusicUser(String email, String password, Role role) {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.playlists = playlists;
     }
 
     public enum Role {

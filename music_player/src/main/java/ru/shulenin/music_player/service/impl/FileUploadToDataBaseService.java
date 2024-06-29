@@ -16,10 +16,10 @@ public class FileUploadToDataBaseService implements FileUploadService {
     private final MusicRepository musicRepository;
 
     @Override
-    public void saveFile(MultipartFile file) throws IOException {
-        var doc = new Music(file.getOriginalFilename(),
-                new MusicUser(),
-                file.getBytes());
-        musicRepository.save(doc);
+    public void saveFile(Music file) throws IOException {
+//        var doc = new Music(file.getOriginalFilename(),
+//                new MusicUser(),
+//                file.getBytes());
+        musicRepository.save(file);
     }
 }

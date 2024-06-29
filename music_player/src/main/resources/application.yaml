@@ -2,19 +2,14 @@ spring:
   application:
     name: music_player
 
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-#  mvc:
-#    view:
-#      prefix: classpath:/templates/
-#      suffix: .html
-
   datasource:
     username: postgres
     password: postgre1488rp
     url: jdbc:postgresql://localhost:5432/music_service
     driver-class-name: org.postgresql.Driver
+
+  profiles:
+    active: dev
 
 server:
   port: 8081

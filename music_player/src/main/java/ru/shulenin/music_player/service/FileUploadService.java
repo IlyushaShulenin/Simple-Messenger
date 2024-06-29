@@ -1,9 +1,9 @@
 package ru.shulenin.music_player.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import ru.shulenin.music_player.entity.Music;
 
 import java.io.IOException;
 
 public interface FileUploadService {
-    void saveFile(MultipartFile file) throws IOException;
+    void saveFile(Music file) throws IOException;
 }

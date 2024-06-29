@@ -16,16 +16,16 @@ public class MusicController {
     private final FileUploadService fileUploadService;
     private final FileDownLoadService fileDownLoadService;
 
-    @PostMapping(value = "/form", consumes = "multipart/form-data")
-    public String upload(@RequestParam("file") MultipartFile file) throws IOException {
-        fileUploadService.saveFile(file);
-        return "success";
-    }
-
-    @GetMapping("/{name}")
-    public Music download(@PathVariable("name") String name) {
-        return fileDownLoadService.download(name).get();
-    }
+//    @PostMapping(value = "/form", consumes = "multipart/form-data")
+//    public String upload(@RequestParam("file") MultipartFile file) throws IOException {
+//        fileUploadService.saveFile(file);
+//        return "success";
+//    }
+//
+//    @GetMapping("/{name}")
+//    public Music download(@PathVariable("name") String name) {
+//        return fileDownLoadService.download(name).get();
+//    }
 
 //    @PostMapping(value = "/form")
 //    public String save(@RequestParam("file") MultipartFile file) throws IOException {

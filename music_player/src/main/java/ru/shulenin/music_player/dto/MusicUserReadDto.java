@@ -7,5 +7,5 @@ import java.util.List;
 @Value
 public class MusicUserReadDto {
     String email;
-    List<PlaylistShortReadDto> playlists;
+    List<String> playlists;
 }

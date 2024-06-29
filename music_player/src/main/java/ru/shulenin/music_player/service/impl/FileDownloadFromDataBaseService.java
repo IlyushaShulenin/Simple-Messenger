@@ -6,7 +6,7 @@ import ru.shulenin.music_player.entity.Music;
 import ru.shulenin.music_player.repository.MusicRepository;
 import ru.shulenin.music_player.service.FileDownLoadService;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,7 +14,7 @@ public class FileDownloadFromDataBaseService implements FileDownLoadService {
     private final MusicRepository musicRepository;
 
     @Override
-    public Optional<Music> download(String name) {
-        return musicRepository.findByName(name);
+    public List<Music> download(String name) {
+        return musicRepository.findAllByName(name);
     }
 }
